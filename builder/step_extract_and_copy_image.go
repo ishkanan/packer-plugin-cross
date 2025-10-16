@@ -102,8 +102,8 @@ func (s *StepExtractAndCopyImage) Run(_ context.Context, state multistep.StateBa
 	}
 
 	// step 6: move single file to destination (as image)
-	srcPath := filepath.Join(dir, files[0].Name())
-	err = os.Rename(srcPath, config.ImageConfig.ImagePath)
+	// Staying with "mv" as os.Rename() sometimes causes an "invalid link error"
+	out, err = exec.Command("mv", filepath.Join(dir, files[0].Name()), config.ImageConfig.ImagePath).CombinedOutput()
 	if err != nil {
 		ui.Error(fmt.Sprintf("error while copying file %v: %s", err, out))
 		return multistep.ActionHalt
